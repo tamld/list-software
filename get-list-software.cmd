@@ -17,21 +17,19 @@ echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\g
 del "%temp%\getadmin.vbs"
 exit /B
 
-::Main
-::Method 1: using Sysinternal - psinfo.exe
-::Method 2: using winget utilities 
 :main
 echo off
 cls
+::Method 1: using Sysinternal - psinfo.exe
 ::\\live.sysinternals.com\tools\psinfo.exe -s /accepteula > %temp%\audit_%computername%.csv
 pushd "%CD%"
 CD /D "%~dp0"
 set _cd=%CD%
+::Method 2: using winget utilities 
 call :func_check-winget
 call :func_winget-export
 call :func_clean-up
 goto :eof
-
 ::Install winget
 ::Check Winget if installed
 :func_check-winget
