@@ -1,6 +1,5 @@
 ::Get list installed software by batch scripts
 ::Support Windows 10, version greater than 1703
-
 Title Obtain a list of all installed software.
 echo off
 cls
@@ -25,6 +24,7 @@ exit /B
 ::Method 1: using Sysinternal - psinfo.exe
 ::Method 2: using winget utilities 
 :main
+Title Main
 echo off
 cls
 pushd "%CD%"
@@ -52,6 +52,7 @@ goto :eof
 
 ::function install winget
 :func_install-winget
+Title Install Winget
 cd /d %temp%
 cls
 echo.
@@ -64,6 +65,7 @@ goto :eof
 
 :: list app exporter
 :func_export
+Title Export all installed apps
 cls
 echo ------------------------------------------------------------------------------- > \\AD01\audit\winget-audit_%computername%.csv
 echo Hostname: %computername% >> \\AD01\audit\winget-audit_%computername%.csv
