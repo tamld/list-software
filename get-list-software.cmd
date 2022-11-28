@@ -32,6 +32,7 @@ CD /D "%~dp0"
 set _cd=%CD%
 call :func_check-winget
 call :func_export
+call :func_check-Windows-Office-licenses
 call :func_clean-up
 goto :eof
 
@@ -63,7 +64,7 @@ start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.Des
 cls
 goto :eof
 
-:: list app exporter
+:: function obtain app installed
 :func_export
 Title Export all installed apps
 cls
@@ -85,6 +86,19 @@ REM rd /s /q . 2>nul
 REM del "%_cd%\get-list-software.cmd"
 del %temp%\Microsoft.VCLibs.x64.14.00.Desktop.appx
 del %temp%\Microsoft.DesktopAppInstaller.msixbundle
+goto :eof
+
+::Check Windows - Office licenses
+:func_check-Windows-Office-licenses
+::Show windows license
+cd %windir%\system32
+cscript slmgr.vbs /dli > AD01\audit\WindowsOffce-audit_%computername%.csv
+cscript slmgr.vbs /xpr >> AD01\audit\WindowsOffce-audit_%computername%.csv
+::Show office license
+for %a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%a")
+if exist "%ProgramFiles% (x86)\Microsoft Office\Office1%a\ospp.vbs" (cd /d "%ProgramFiles% (x86)\Microsoft Office\Office1%a"))
+cls
+cscript ospp.vbs /dstatus >>\\AD01\audit\WindowsOffce-audit_%computername%.csv
 goto :eof
 
 :eof
