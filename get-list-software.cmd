@@ -32,7 +32,7 @@ CD /D "%~dp0"
 set _cd=%CD%
 call :func_check-winget
 call :func_export
-call :func_check-Windows-Office-licenses
+call :func_check-WO-licenses
 call :func_clean-up
 goto :eof
 
@@ -68,15 +68,15 @@ goto :eof
 :func_export
 Title Export all installed apps
 cls
-echo ------------------------------------------------------------------------------- > \\AD01\audit\winget-audit_%computername%.csv
-echo Hostname: %computername% >> \\AD01\audit\winget-audit_%computername%.csv
-echo Username: %username% >> \\AD01\audit\winget-audit_%computername%.csv
-echo ------------------------------------------------------------------------------- >> \\AD01\audit\winget-audit_%computername%.csv
-echo . >> \\AD01\audit\winget-audit_%computername%.csv
-echo y | winget list --accept-source-agreements >> \\AD01\audit\winget-audit_%computername%.csv
-wmic /output:"\\AD01\audit\wmic-audit_%computername%.csv" product get name,version
-"\\AD01\audit\PSTools\PsInfo.exe" -s -nobanner /accepteula > \\AD01\audit\psinfo-audit_%computername%.csv
-"\\AD01\audit\PSTools\PsInfo64.exe" -s -d -nobanner /accepteula >> \\AD01\audit\psinfo-audit_%computername%.csv
+echo ------------------------------------------------------------------------------- > \\AD01\audit\%computername%_winget-audit.csv
+echo Hostname: %computername% >> \\AD01\audit\%computername%_winget-audit.csv
+echo Username: %username% >> \\AD01\audit\%computername%_winget-audit.csv
+echo ------------------------------------------------------------------------------- >> \\AD01\audit\%computername%_winget-audit.csv
+echo . >> \\AD01\audit\%computername%_winget-audit.csv
+echo y | winget list --accept-source-agreements >> \\AD01\audit\%computername%_winget-audit.csv
+wmic /output:"\\AD01\audit\%computername%_wmic-audit.csv" product get name,version
+"\\AD01\audit\PSTools\PsInfo.exe" -s -nobanner /accepteula > \\AD01\audit\%computername%_psinfo-audit.csv
+"\\AD01\audit\PSTools\PsInfo64.exe" -s -d -nobanner /accepteula >> \\AD01\audit\%computername%_psinfo-audit.csv
 goto :eof
 
 ::Clean up all temporay files, folders in %temp%
@@ -89,16 +89,16 @@ del %temp%\Microsoft.DesktopAppInstaller.msixbundle
 goto :eof
 
 ::Check Windows - Office licenses
-:func_check-Windows-Office-licenses
+:func_check-WO-licenses
 ::Show windows license
 cd %windir%\system32
-cscript slmgr.vbs /dli > AD01\audit\WindowsOffce-audit_%computername%.csv
-cscript slmgr.vbs /xpr >> AD01\audit\WindowsOffce-audit_%computername%.csv
+cscript slmgr.vbs /dli > \\AD01\audit\%computername%_WindowsOffce-audit.csv
+cscript slmgr.vbs /xpr >> \\AD01\audit\%computername%_WindowsOffce-audit.csv
 ::Show office license
-for %a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%a")
-if exist "%ProgramFiles% (x86)\Microsoft Office\Office1%a\ospp.vbs" (cd /d "%ProgramFiles% (x86)\Microsoft Office\Office1%a"))
+for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%%a")
+if exist "%ProgramFiles% (x86)\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles% (x86)\Microsoft Office\Office1%%a"))
 cls
-cscript ospp.vbs /dstatus >>\\AD01\audit\WindowsOffce-audit_%computername%.csv
+cscript ospp.vbs /dstatus >>\\AD01\audit\%computername%_WindowsOffce-audit.csv
 goto :eof
 
 :eof
