@@ -69,7 +69,7 @@ goto :eof
 Title Export software installed
 echo off
 call :func_get-list-software-winget
-::call :func_get-list-software-powershell
+call :func_get-list-software-powershell
 goto :eof
 
 
@@ -113,9 +113,9 @@ REM del %temp%\Microsoft.VCLibs.x64.14.00.Desktop.appx
 REM del %temp%\Microsoft.DesktopAppInstaller.msixbundle
 goto :eof
 
-::Check Windows - Office licenses
+
 :func_check-WO-licenses
-::Show windows license
+::Check Windows - Office licenses
 cd %windir%\system32
 cscript slmgr.vbs /dli > %temp%\audit\%computername%_WindowsOffce-audit.csv
 cscript slmgr.vbs /xpr >> %temp%\audit\%computername%_WindowsOffce-audit.csv
