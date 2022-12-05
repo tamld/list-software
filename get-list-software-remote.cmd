@@ -91,24 +91,15 @@ goto :eof
 ::This function will return a list of software installed on the computer either x86 or x64
 Title Export all installed apps by powershell
 cls
+::Export file powershell for audit
 echo off
-REM powershell
-REM $paths=@(
-  REM 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\',
-  REM 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
-REM )
-REM foreach($path in $paths){
-  REM Get-ChildItem -Path $path |
-    REM Get-ItemProperty |
-      REM Select DisplayName, Publisher, InstallDate, DisplayVersion >> %temp%\audit\%computername%_powershell-audit.csv
-REM }
-REM cmd
-powershell
-$paths = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*',
-         'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
-$app=Get-ItemProperty $paths | select DisplayName,Version,UninstallString
-echo $app > $env:temp\audit\$env:computername'_powershell-audit.csv'
-cmd
+powershell -Command Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+echo ^$paths ^= 'HKLM:^\Software^\Microsoft^\Windows^\CurrentVersion^\Uninstall^\*', > %temp%\audit\%computername%_powershell-audit.ps1
+echo         'HKLM:^\Software^\WOW6432Node^\Microsoft^\Windows^\CurrentVersion^\Uninstall^\*' >> %temp%\audit\%computername%_powershell-audit.ps1
+REM echo ^$app^=Get-ItemProperty ^$paths ^| select DisplayName,Version,UninstallString >> %temp%\audit\%computername%_powershell-audit.ps1
+echo ^$app^=Get-ItemProperty ^$paths ^| select DisplayName,Version >> %temp%\audit\%computername%_powershell-audit.ps1
+echo echo ^$app ^> ^$env:temp^\audit^\^$env:computername'_powershell-audit.csv' >> %temp%\audit\%computername%_powershell-audit.ps1
+powershell -Command %temp%\audit\%computername%_powershell-audit.ps1
 goto :eof
 
 :func_clean-up
@@ -151,7 +142,7 @@ goto :eof
 :func_zip-to-archive
 ::function create zip all audit files in the %temp%\audit
 cls
-"%ProgramFiles%\7-Zip\7z.exe" a %userprofile%\Desktop\%computername%_audit.zip %temp%\audit\*
+"%ProgramFiles%\7-Zip\7z.exe" a %userprofile%\Desktop\%computername%_audit.zip %temp%\audit\*.csv
 goto :eof
 
 :eof
